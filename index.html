@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나 졸업할 수 있을까?</title>
+<script>
+  (function(d) {
+    var config = {
+      kitId: 'gtd0dzq',
+      scriptTimeout: 3000,
+      async: true
+    },
+    h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+  })(document);
+</script>
+<link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="header-chip"><span class="header-chip-dot"></span>국민대학교 조형대학</div>
+    <h1><em>졸업</em>할 수 있을까?</h1>
+  </header>
+
+  <div class="steps-wrap">
+
+    <!-- STEP 1: 학번 -->
+    <div class="step-card visible" id="step1">
+      <div class="step-card-head">
+        <div class="step-icon-wrap"><span class="step-icon-emoji">🎓</span></div>
+        <div><div class="step-title">학번을 선택하세요</div></div>
+      </div>
+      <div class="step-body">
+        <div class="custom-dd" id="dd-year">
+          <div class="dd-trigger" onclick="toggleDD('dd-year')">
+            <span class="dd-label">학번 선택하기</span>
+            <div class="dd-arrow">▾</div>
+          </div>
+          <div class="dd-list">
+            <div class="dd-item" data-dd="dd-year" data-val="26">26학번</div>
+            <div class="dd-item" data-dd="dd-year" data-val="25">25학번</div>
+            <div class="dd-item" data-dd="dd-year" data-val="24">24학번</div>
+            <div class="dd-item" data-dd="dd-year" data-val="23">23학번</div>
+            <div class="dd-item" data-dd="dd-year" data-val="22">22학번</div>
+            <div class="dd-item" data-dd="dd-year" data-val="21">21학번</div>
+            <div class="dd-item" data-dd="dd-year" data-val="20">20학번</div>
+            <div class="dd-item" data-dd="dd-year" data-val="19">19학번</div>
+            <div class="dd-item" data-dd="dd-year" data-val="18">18학번</div>
+            <div class="dd-item" data-dd="dd-year" data-val="17">17학번</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: 학과 -->
+    <div class="step-card" id="step2">
+      <div class="step-card-head">
+        <div class="step-icon-wrap"><span class="step-icon-emoji">🎨</span></div>
+        <div><div class="step-title">학과를 선택하세요</div></div>
+      </div>
+      <div class="step-body">
+        <div class="custom-dd" id="dd-dept">
+          <div class="dd-trigger" onclick="toggleDD('dd-dept')">
+            <span class="dd-label">학과 선택하기</span>
+            <div class="dd-arrow">▾</div>
+          </div>
+          <div class="dd-list">
+            <div class="dd-item" data-dd="dd-dept" data-val="industrial">공업디자인학과</div>
+            <div class="dd-item" data-dd="dd-dept" data-val="visual">시각디자인학과</div>
+            <div class="dd-item" data-dd="dd-dept" data-val="metal">금속공예학과</div>
+            <div class="dd-item" data-dd="dd-dept" data-val="ceramic">도자공예학과</div>
+            <div class="dd-item" data-dd="dd-dept" data-val="fashion">의상디자인학과</div>
+            <div class="dd-item" data-dd="dd-dept" data-val="space">공간디자인학과</div>
+            <div class="dd-item" data-dd="dd-dept" data-val="media">영상디자인학과</div>
+            <div class="dd-item" data-dd="dd-dept" data-val="auto">자동차·운송디자인학과</div>
+            <div class="dd-item" data-dd="dd-dept" data-val="ai">AI디자인학과</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: 트랙 -->
+    <div class="step-card" id="step3">
+      <div class="step-card-head">
+        <div class="step-icon-wrap"><span class="step-icon-emoji">🗺️</span></div>
+        <div><div class="step-title">이수 구분을 선택하세요</div></div>
+      </div>
+      <div class="step-body">
+        <div class="option-group">
+          <button class="option-btn" data-type="track" data-val="intensive">심화전공</button>
+          <button class="option-btn" data-type="track" data-val="double">복수전공</button>
+          <button class="option-btn" data-type="track" data-val="minor">부전공</button>
+        </div>
+        <div class="track-info" id="track-info"></div>
+
+        <!-- 복수/부전공 선택 시 제2전공 -->
+        <div class="second-major-card" id="second-major-card">
+          <div class="second-major-label" id="second-major-label">어떤 전공을 복수전공 하시나요?</div>
+          <div class="custom-dd" id="dd-second">
+            <div class="dd-trigger" onclick="toggleDD('dd-second')">
+              <span class="dd-label">전공 선택하기</span>
+              <div class="dd-arrow">▾</div>
+            </div>
+            <div class="dd-list">
+              <div class="dd-item" data-dd="dd-second" data-val="industrial">공업디자인학과</div>
+              <div class="dd-item" data-dd="dd-second" data-val="visual">시각디자인학과</div>
+              <div class="dd-item" data-dd="dd-second" data-val="metal">금속공예학과</div>
+              <div class="dd-item" data-dd="dd-second" data-val="ceramic">도자공예학과</div>
+              <div class="dd-item" data-dd="dd-second" data-val="fashion">의상디자인학과</div>
+              <div class="dd-item" data-dd="dd-second" data-val="space">공간디자인학과</div>
+              <div class="dd-item" data-dd="dd-second" data-val="media">영상디자인학과</div>
+              <div class="dd-item" data-dd="dd-second" data-val="auto">자동차·운송디자인학과</div>
+              <div class="dd-item" data-dd="dd-second" data-val="ai">AI디자인학과</div>
+              <div class="dd-item" data-dd="dd-second" data-val="other">타 단과대학 전공</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="toggle-row" id="autonomous-toggle" style="display:none">
+          <div>
+            <div class="toggle-label">자유전공 혹은 미래융합전공으로 <br>입학하셨나요?</div>
+            <div class="toggle-sub">25학번부터 적용 · 1학년 탐색과목 전공 <br>인정 여부가 달라요</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="autonomous-check">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: 업로드 -->
+    <div class="step-card" id="step4">
+      <div class="step-card-head">
+        <div class="step-icon-wrap"><span class="step-icon-emoji">📱</span></div>
+        <div><div class="step-title">이수현황조회를 모두 캡쳐해주세요</div></div>
+      </div>
+      <div class="step-body">
+        <div class="upload-zone" id="upload-zone">
+          <input type="file" id="file-input" accept="image/*" multiple>
+          <span class="upload-icon">☁️</span>
+          <div class="upload-text">on국민 앱 → 우측상단 ☰ → 이수현황조회</div>
+          <div class="upload-sub">여러장도 괜찮아요</div>
+          <div class="upload-previews" id="previews"></div>
+        </div>
+        <button class="analyze-btn" id="analyze-btn" disabled>
+          AI 이미지 분석 시작하기 <span class="btn-arrow">→</span>
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /steps-wrap -->
+
+  <div class="loading" id="loading">
+    <div class="loading-dots"><span></span><span></span><span></span></div>
+    <div class="loading-text" id="loading-text">캡쳐에서 학점 정보를 읽는 중이에요...</div>
+  </div>
+
+  <div id="result">
+    <div class="result-hero">
+      <div class="hero-top">
+        <div class="hero-tag">졸업 현황</div>
+        <div class="hero-date" id="result-date"></div>
+      </div>
+      <div class="hero-pct" id="overall-pct">—<span>%</span></div>
+      <div class="hero-msg" id="overall-label">—</div>
+      <div class="hero-detail" id="overall-detail">—</div>
+    </div>
+
+    <div class="section-label">이수구분별 현황</div>
+    <div class="cards-grid" id="cards-grid"></div>
+
+    <div class="section-label">세부 진행률</div>
+    <div class="prog-card" id="progress-section"></div>
+
+    <div class="section-label">필수과목 체크</div>
+    <div class="alerts-wrap" id="alerts-section"></div>
+
+   <div class="cert-wrap">
+  <div class="cert-title">🏆 전시점수</div>
+  <div class="cert-sub">직접 입력해 주세요 · 마감 2025년 12월 1일</div>
+  <div class="cert-grid">
+    <div class="cert-item">
+      <div class="cert-item-left">
+        <div class="cert-item-name">공모전 수상</div>
+        <div class="cert-item-desc">국내 입상 70 · 입선 30<br>국외 입상 100 · 입선 60</div>
+      </div>
+      <div class="cert-input-row"><input class="cert-input" type="number" id="c1" value="0" min="0"><span class="cert-unit">점</span></div>
+    </div>
+    <div class="cert-item">
+      <div class="cert-item-left">
+        <div class="cert-item-name">전시 (국내·외 공통)</div>
+        <div class="cert-item-desc">개인전 100 · 2~5인 70 · 6인이상 30<br>본교주관(교류·국제·과제전) 10<br>온라인·동아리 전시 10</div>
+      </div>
+      <div class="cert-input-row"><input class="cert-input" type="number" id="c2" value="0" min="0"><span class="cert-unit">점</span></div>
+    </div>
+    <div class="cert-item">
+      <div class="cert-item-left">
+        <div class="cert-item-name">기타</div>
+        <div class="cert-item-desc">산학협력 현장실습 30<br>교내선발(SGE·지암·교환·인턴) 국내 30 · 국외 50<br>교외 인턴십 30<br>봉사활동(8h↑) 국내 30 · 국외 50<br>대외활동 국내 30 · 국외 50</div>
+      </div>
+      <div class="cert-input-row"><input class="cert-input" type="number" id="c3" value="0" min="0"><span class="cert-unit">점</span></div>
+    </div>
+    <div class="cert-item">
+      <div class="cert-item-left">
+        <div class="cert-item-name">독후감</div>
+        <div class="cert-item-desc">지정도서 독후감 A4 2매 이상 제출<br>1권 = 2점</div>
+      </div>
+      <div class="cert-input-row"><input class="cert-input" type="number" id="c4" value="0" min="0"><span class="cert-unit">점</span></div>
+    </div>
+  </div>
+  <div class="cert-bottom">
+    <div class="cert-score"><span id="cert-total">0</span><span class="goal"> / 100</span></div>
+    <div class="cert-r">
+      <div class="cert-msg" id="cert-msg">점수를 입력하면 현황이 업데이트돼요</div>
+      <div class="cert-bar-bg"><div class="cert-bar-fill" id="cert-bar" style="width:0%"></div></div>
+    </div>
+  </div>
+</div>
+
+    <button class="reset-btn" id="reset-btn">← 처음부터 다시</button>
+  </div>
+
+  <footer>
+    국민대학교 조형대학 비공식 졸업요건 진단기<br>
+    본 정보는 참고용이며, 정확한 내용은 학사팀에 확인하세요
+  </footer>
+</div>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
