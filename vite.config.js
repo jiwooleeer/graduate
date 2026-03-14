@@ -5,6 +5,7 @@ export default defineConfig({
         host: true,
         port: 5173,
         open: true,
-        strictPort: true
+        strictPort: true,
+        base: 'jiwooleeer/graduate/', // repo 이름으로
     }
 });
