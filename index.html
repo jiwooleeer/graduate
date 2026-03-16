@@ -134,7 +134,7 @@
     <div class="step-card" id="step4">
       <div class="step-card-head">
         <div class="step-icon-wrap"><span class="step-icon-emoji">📱</span></div>
-        <div><div class="step-title">ON국민에서 이수현황을<br>모두 캡쳐해주세요</div></div>
+        <div><div class="step-title">ON국민에서 이수현황을<br>모두 캡쳐해 알려주세요</div></div>
       </div>
       <div class="step-body">
         <div class="upload-zone" id="upload-zone">
@@ -184,27 +184,30 @@
     <div class="cert-item">
       <div class="cert-item-left">
         <div class="cert-item-name">공모전 수상</div>
-        <div class="cert-item-desc">국내 입상 70 · 입선 30<br>국외 입상 100 · 입선 60</div>
+        <div class="cert-item-desc">국내 입상 70  입선 30<br>국외 입상 100   입선 60</div>
       </div>
       <div class="cert-input-row"><input class="cert-input" type="number" id="c1" value="0" min="0"><span class="cert-unit">점</span></div>
     </div>
     <div class="cert-item">
       <div class="cert-item-left">
         <div class="cert-item-name">전시 (국내·외 공통)</div>
-        <div class="cert-item-desc">개인전 100 · 2~5인 70 · 6인이상 30<br>본교주관(교류·국제·과제전) 10<br>온라인·동아리 전시 10</div>
+        <div class="cert-item-desc">개인전 100   2~5인 70   6인이상 30<br>본교주관(교류·국제·과제전) 10<br>온라인·동아리 전시 10</div>
       </div>
       <div class="cert-input-row"><input class="cert-input" type="number" id="c2" value="0" min="0"><span class="cert-unit">점</span></div>
     </div>
     <div class="cert-item">
       <div class="cert-item-left">
         <div class="cert-item-name">기타</div>
-        <div class="cert-item-desc">산학협력 현장실습 30<br>교내선발(SGE·지암·교환·인턴) 국내 30 · 국외 50<br>교외 인턴십 30<br>봉사활동(8h↑) 국내 30 · 국외 50<br>대외활동 국내 30 · 국외 50</div>
+        <div class="cert-item-desc">산학협력 현장실습 30<br>교내선발(SGE·지암·교환·인턴)<br>국내 30  국외 50<br>교외 인턴십 30<br>봉사활동(8h↑) 국내 30   국외 50<br>대외활동 국내 30   국외 50</div>
       </div>
       <div class="cert-input-row"><input class="cert-input" type="number" id="c3" value="0" min="0"><span class="cert-unit">점</span></div>
     </div>
     <div class="cert-item">
       <div class="cert-item-left">
-        <div class="cert-item-name">독후감</div>
+      <div class="cert-item-name" style="display:flex; align-items:center; gap:6px;">
+  독후감
+  <a href="booklist.pdf" target="_blank" style="width:18px; height:18px; border-radius:50%; background:var(--text-tertiary); color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; text-decoration:none; flex-shrink:0;">?</a>
+</div>
         <div class="cert-item-desc">지정도서 독후감 A4 2매 이상 제출<br>1권 = 2점</div>
       </div>
       <div class="cert-input-row"><input class="cert-input" type="number" id="c4" value="0" min="0"><span class="cert-unit">점</span></div>
@@ -229,5 +232,83 @@
 </div>
 
 <script type="module" src="src/main.js"></script>
+
+<!-- 심화전공 안내 팝업 -->
+<div class="popup-overlay" id="intensive-popup-overlay">
+  <div class="popup-modal">
+    <button class="popup-close" id="popup-close-btn">✕</button>
+    <div class="popup-total">
+      <div class="popup-total-label">조형대 졸업이수학점</div>
+      <div class="popup-total-pts">130점</div>
+    </div>
+    <div class="popup-deck">
+      <div class="popup-deck-card">
+        <div class="popup-deck-row">
+          <span class="popup-deck-name">공통교양</span>
+          <span class="popup-deck-pts">30점</span>
+        </div>
+        <div class="popup-deck-sub">기초교양 13 · 핵심교양 15 · 자유교양 2</div>
+      </div>
+      <div class="popup-deck-card">
+        <div class="popup-deck-row">
+          <span class="popup-deck-name">전공최소학점</span>
+          <span class="popup-deck-pts">4~50점대</span>
+        </div>
+        <div class="popup-deck-note">*과별로 상이</div>
+        <div class="popup-deck-sub">전공필수 · 전공선택 · 전공기초교양 등</div>
+      </div>
+      <div class="popup-deck-card popup-deck-card--highlight">
+        <div class="popup-deck-row">
+          <span class="popup-deck-name">일반선택</span>
+          <span class="popup-deck-pts">50점대</span>
+        </div>
+        <div class="popup-deck-note">*과별로 상이</div>
+        <div class="popup-deck-sub">전공 / 교양 / 타전공 등 무엇이든 가능</div>
+      </div>
+    </div>
+    <div class="popup-footer-note">
+      심화전공은 <strong>일반선택 학점 중</strong> 18점 이상을<br>전공으로 수강해야해요
+    </div>
+  </div>
+</div>
+
+<!-- 부전공 안내 팝업 -->
+<div class="popup-overlay" id="minor-popup-overlay">
+  <div class="popup-modal">
+    <button class="popup-close" id="minor-popup-close-btn">✕</button>
+    <div class="popup-total">
+      <div class="popup-total-label">조형대 졸업이수학점</div>
+      <div class="popup-total-pts">130점</div>
+    </div>
+    <div class="popup-deck">
+      <div class="popup-deck-card">
+        <div class="popup-deck-row">
+          <span class="popup-deck-name">공통교양</span>
+          <span class="popup-deck-pts">30점</span>
+        </div>
+        <div class="popup-deck-sub">기초교양 13 · 핵심교양 15 · 자유교양 2</div>
+      </div>
+      <div class="popup-deck-card">
+        <div class="popup-deck-row">
+          <span class="popup-deck-name">전공최소학점</span>
+          <span class="popup-deck-pts">4~50점대</span>
+        </div>
+        <div class="popup-deck-note">*과별로 상이</div>
+        <div class="popup-deck-sub">전공필수 · 전공선택 · 전공기초교양 등</div>
+      </div>
+      <div class="popup-deck-card popup-deck-card--highlight">
+        <div class="popup-deck-row">
+          <span class="popup-deck-name">일반선택</span>
+          <span class="popup-deck-pts">50점대</span>
+        </div>
+        <div class="popup-deck-note">*과별로 상이</div>
+        <div class="popup-deck-sub">전공 / 교양 / 타전공 등 무엇이든 가능</div>
+      </div>
+    </div>
+    <div class="popup-footer-note">
+      부전공은 <strong>일반선택 학점 중</strong> 18점 이상을<br>전공으로 수강해야해요
+    </div>
+  </div>
+</div>
 </body>
 </html>

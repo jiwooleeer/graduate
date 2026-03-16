@@ -7,9 +7,9 @@ var deptNames = {
 };
 
 var trackMsgs = {
-  intensive: '전공 최저학점과 별개로 전공 18학점 이상을 추가 이수해야해요',
+  intensive: '전공 최저학점과 별개로 <br>전공 18학점 이상을 추가 이수해야해요',
   double: '제1전공 요건에 복수전공 최저학점(36학점 이상)을 별도로 추가 이수해야 해요',
-  minor: '제1전공 요건에 부전공 18학점 이상을 추가 이수해야 해요'
+  minor: '제1전공 요건에 부전공 18학점 이상을<br>추가 이수해야 해요'
 };
 
 /* ─── CUSTOM DROPDOWN ─── */
@@ -74,8 +74,25 @@ document.querySelectorAll('.option-btn[data-type="track"]').forEach(function(btn
     document.querySelectorAll('.option-btn[data-type="track"]').forEach(function(b) { b.classList.remove('selected'); });
     this.classList.add('selected');
     var info = document.getElementById('track-info');
-    info.textContent = trackMsgs[val];
-    info.style.display = 'block';
+if (val === 'intensive') {
+  info.innerHTML = '<span>' + trackMsgs[val] + '</span><button class="track-help-btn" onclick="openIntensivePopup()">?</button>';
+  info.style.display = 'flex';
+  info.style.alignItems = 'flex-start';
+  info.style.justifyContent = 'space-between';
+  info.style.gap = '8px';
+} else if (val === 'minor') {
+  info.innerHTML = '<span>' + trackMsgs[val] + '</span><button class="track-help-btn" onclick="openMinorPopup()">?</button>';
+  info.style.display = 'flex';
+  info.style.alignItems = 'flex-start';
+  info.style.justifyContent = 'space-between';
+  info.style.gap = '8px';
+} else {
+  info.innerHTML = trackMsgs[val];
+  info.style.display = 'block';
+  info.style.alignItems = '';
+  info.style.justifyContent = '';
+  info.style.gap = '';
+}
     var card = document.getElementById('second-major-card');
     var label = document.getElementById('second-major-label');
     if (val === 'double' || val === 'minor') {
@@ -98,6 +115,30 @@ document.querySelectorAll('.option-btn[data-type="track"]').forEach(function(btn
 });
 
 document.getElementById('autonomous-check').addEventListener('change', function() { state.autonomous = this.checked; });
+
+/* ─── 심화전공 안내 팝업 ─── */
+window.openIntensivePopup = function() {
+  document.getElementById('intensive-popup-overlay').classList.add('open');
+};
+window.closeIntensivePopup = function() {
+  document.getElementById('intensive-popup-overlay').classList.remove('open');
+};
+document.getElementById('intensive-popup-overlay').addEventListener('click', function(e) {
+  if (e.target === this) window.closeIntensivePopup();
+});
+document.getElementById('popup-close-btn').addEventListener('click', window.closeIntensivePopup);
+
+/* ─── 부전공 안내 팝업 ─── */
+window.openMinorPopup = function() {
+  document.getElementById('minor-popup-overlay').classList.add('open');
+};
+window.closeMinorPopup = function() {
+  document.getElementById('minor-popup-overlay').classList.remove('open');
+};
+document.getElementById('minor-popup-overlay').addEventListener('click', function(e) {
+  if (e.target === this) window.closeMinorPopup();
+});
+document.getElementById('minor-popup-close-btn').addEventListener('click', window.closeMinorPopup);
 
 function showStep(id) {
   var el = document.getElementById(id);
@@ -262,7 +303,7 @@ async function runAnalysis() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + import.meta.env.VITE_OPENAI_API_KEY },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         max_tokens: 1500,
         messages: [{ role: 'user', content: openaiImages.concat([{ type: 'text', text: prompt }]) }]
       })
@@ -303,8 +344,8 @@ function renderResult(data, baseFromImage, finalMajorRequired) {
 
   document.getElementById('overall-pct').innerHTML = pct + '<span>%</span>';
   document.getElementById('overall-label').textContent =
-    pct >= 100 ? '🎓 학점 요건 완료!' : pct >= 80 ? '거의 다 왔어요! 조금만 더' :
-    pct >= 50 ? '절반 넘었어요, 잘 가고 있어요' : '아직 갈 길이 있어요, 파이팅!';
+    pct >= 100 ? '🎓 졸업을 축하해요!' : pct >= 80 ? '거의 다 왔어요! 조금만 더' :
+    pct >= 50 ? '절반 넘었어요, 잘 가고 있어요' : '잘하고 있어요, 파이팅!';
   document.getElementById('overall-detail').innerHTML =
     '총 이수학점 ' + totalEarned + ' / ' + totalRequired + '학점 &nbsp;·&nbsp; 남은 학점 ' + Math.max(0, totalRequired - totalEarned) + '학점';
   document.getElementById('result-date').textContent = new Date().toLocaleDateString('ko-KR') + ' 기준';
@@ -363,34 +404,8 @@ function renderResult(data, baseFromImage, finalMajorRequired) {
   var alerts = document.getElementById('alerts-section');
   alerts.innerHTML = '';
 
-  // 핵심교양 분야별 3학점 체크
-  if (coreFields.length > 0) {
-    if (coreByFieldOk) {
-      alerts.innerHTML += '<div class="alert-item ok"><span class="alert-ico">✅</span><div class="alert-txt"><strong>핵심교양 분야별 요건 충족</strong><span>모든 분야에서 3학점 이상 이수했어요</span></div></div>';
-    } else {
-      coreFail.forEach(function(f) {
-        alerts.innerHTML += '<div class="alert-item danger"><span class="alert-ico">❌</span><div class="alert-txt"><strong>핵심교양 [' + f['분야'] + '] 미충족</strong><span>현재 ' + (f['이수학점'] || 0) + '학점 — 분야별 3학점 이상 필요해요</span></div></div>';
-      });
-    }
-  }
-
-  // 기초교양 필수 3과목
-  [{name:'글쓰기',ok:b['글쓰기_이수']},{name:'College English',ok:b['CollegeEnglish_이수']},{name:'English Conversation',ok:b['EnglishConversation_이수']}].forEach(function(item) {
-    var cls = item.ok ? 'ok' : 'danger';
-    alerts.innerHTML += '<div class="alert-item ' + cls + '"><span class="alert-ico">' + (item.ok ? '✅' : '❌') + '</span><div class="alert-txt"><strong>' + item.name + '</strong><span>' + (item.ok ? '이수 완료' : '미이수 — 기초교양 필수과목이에요, 반드시 들어야 해요') + '</span></div></div>';
-  });
-
-  // 필수과목 미이수
-  m.forEach(function(item) {
-    if (item['이수현황'] && item['이수현황'].includes('미이수')) {
-      alerts.innerHTML += '<div class="alert-item danger"><span class="alert-ico">⚠️</span><div class="alert-txt"><strong>필수과목 미이수: ' + item['교과목명'] + '</strong><span>졸업 전에 반드시 이수해야 해요</span></div></div>';
-    }
-  });
-
-  // ── 트랙별 안내 ──
-  // 핵심: 총 130학점은 고정, 트랙에 따라 일반선택 18학점의 용도가 달라짐
+  // ── 트랙별 안내 (맨 위) ──
   if (state.track === 'intensive') {
-    // 심화전공: 일반선택 18학점을 제1전공 추가 전공학점으로 채워야 함
     var intensiveRequired = Math.max(baseFromImage + 18, 66);
     var intensiveShort = Math.max(0, intensiveRequired - majorEarned);
     var intensiveCls = intensiveShort === 0 ? 'ok' : 'danger';
@@ -402,13 +417,11 @@ function renderResult(data, baseFromImage, finalMajorRequired) {
   }
 
   if (state.track === 'minor') {
-    // 부전공: 일반선택 18학점을 타과 전공선택으로 채워야 함
     var minorDeptName = state.secondDept ? deptNames[state.secondDept] : '선택한 학과';
     alerts.innerHTML += '<div class="alert-item warn"><span class="alert-ico">📌</span><div class="alert-txt"><strong>부전공 조건 — ' + minorDeptName + '</strong><span>일반선택 18학점을 ' + minorDeptName + ' 전공선택 과목으로 채워야 해요 — 제2전공 이수현황 캡처도 함께 올려주세요</span></div></div>';
   }
 
   if (state.track === 'double') {
-    // 복수전공: 제2전공 졸업요건을 별도로 모두 충족해야 함 (중복인정 최대 15학점)
     var doubleDeptName = state.secondDept ? deptNames[state.secondDept] : '선택한 학과';
     alerts.innerHTML += '<div class="alert-item warn"><span class="alert-ico">📌</span><div class="alert-txt"><strong>복수전공 조건 — ' + doubleDeptName + '</strong><span>' + doubleDeptName + '의 졸업요건을 별도로 모두 충족해야 해요 (제1전공과 최대 15학점 중복 인정) — 제2전공 이수현황 캡처도 함께 올려주세요</span></div></div>';
   }
@@ -416,6 +429,27 @@ function renderResult(data, baseFromImage, finalMajorRequired) {
   if (state.autonomous) {
     alerts.innerHTML += '<div class="alert-item warn"><span class="alert-ico">ℹ️</span><div class="alert-txt"><strong>자율전공 입학자 안내</strong><span>1학년 탐색과목의 전공 인정 여부는 학과에 별도로 확인이 필요해요</span></div></div>';
   }
+
+  // 핵심교양 분야별 — 미충족만 표시
+  if (coreFields.length > 0 && !coreByFieldOk) {
+    coreFail.forEach(function(f) {
+      alerts.innerHTML += '<div class="alert-item danger"><span class="alert-ico">❌</span><div class="alert-txt"><strong>핵심교양 [' + f['분야'] + '] 미충족</strong><span>현재 ' + (f['이수학점'] || 0) + '학점 — 분야별 3학점 이상 필요해요</span></div></div>';
+    });
+  }
+
+  // 기초교양 필수 3과목 — 미이수만 표시
+  [{name:'글쓰기',ok:b['글쓰기_이수']},{name:'College English',ok:b['CollegeEnglish_이수']},{name:'English Conversation',ok:b['EnglishConversation_이수']}].forEach(function(item) {
+    if (!item.ok) {
+      alerts.innerHTML += '<div class="alert-item danger"><span class="alert-ico">❌</span><div class="alert-txt"><strong>' + item.name + '</strong><span>미이수 — 기초교양 필수과목이에요, 반드시 들어야 해요</span></div></div>';
+    }
+  });
+
+  // 필수과목 미이수
+  m.forEach(function(item) {
+    if (item['이수현황'] && item['이수현황'].includes('미이수')) {
+      alerts.innerHTML += '<div class="alert-item danger"><span class="alert-ico">⚠️</span><div class="alert-txt"><strong>필수과목 미이수: ' + item['교과목명'] + '</strong><span>졸업 전에 반드시 이수해야 해요</span></div></div>';
+    }
+  });
 
   var result = document.getElementById('result');
   result.style.display = 'block';
