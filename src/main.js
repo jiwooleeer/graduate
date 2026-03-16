@@ -7,9 +7,9 @@ var deptNames = {
 };
 
 var trackMsgs = {
-  intensive: '전공 최저학점과 별개로 <br>전공 18학점 이상을 추가 이수해야해요',
+  intensive: '전공 최저학점과 별개로 전공 <br>18학점 이상을 추가 이수해야해요',
   double: '제1전공 요건에 복수전공 최저학점(36학점 이상)을 별도로 추가 이수해야 해요',
-  minor: '제1전공 요건에 부전공 18학점 이상을<br>추가 이수해야 해요'
+  minor: '제1전공 요건에 부전공 18학점 <br>이상을 추가 이수해야 해요'
 };
 
 /* ─── CUSTOM DROPDOWN ─── */
@@ -344,7 +344,7 @@ function renderResult(data, baseFromImage, finalMajorRequired) {
 
   document.getElementById('overall-pct').innerHTML = pct + '<span>%</span>';
   document.getElementById('overall-label').textContent =
-    pct >= 100 ? '🎓 졸업을 축하해요!' : pct >= 80 ? '거의 다 왔어요! 조금만 더' :
+    pct >= 100 ? '🎓 졸업을 축하해요!' : pct >= 70 ? '거의 다 왔어요! 조금만 더' :
     pct >= 50 ? '절반 넘었어요, 잘 가고 있어요' : '잘하고 있어요, 파이팅!';
   document.getElementById('overall-detail').innerHTML =
     '총 이수학점 ' + totalEarned + ' / ' + totalRequired + '학점 &nbsp;·&nbsp; 남은 학점 ' + Math.max(0, totalRequired - totalEarned) + '학점';
