@@ -188,7 +188,8 @@ h1 em { font-style: normal; background: var(--green); padding: 0 4px; border-rad
 .popup-total-pts { font-size: 48px; font-weight: 700; letter-spacing: -2px; line-height: 1; color: var(--text-primary);  }
 
 /* POPUP DECK */
-.popup-deck { display: flex; flex-direction: column; gap: 10px; margin-top: 30px; margin-bottom: 16px; }
+.popup-deck { display: flex; flex-direction: column; gap: 10px; margin-top: 0; margin-bottom: 16px; }
+.popup-deck-divider { text-align: center; font-size: 18px; font-weight: 700; color: var(--text-tertiary); line-height: 1; margin: -2px 0; }
 .popup-deck-card { background: var(--surface-sub); border-radius: 16px; padding: 16px 20px; }
 .popup-deck-card--highlight { background: var(--green-sub); border: 2px solid var(--green); }
 .popup-deck-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
