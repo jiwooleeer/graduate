@@ -303,7 +303,7 @@ async function runAnalysis() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + import.meta.env.VITE_OPENAI_API_KEY },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4o',
         max_tokens: 1500,
         messages: [{ role: 'user', content: openaiImages.concat([{ type: 'text', text: prompt }]) }]
       })
