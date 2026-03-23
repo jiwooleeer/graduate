@@ -1,4 +1,4 @@
-var state = { year: null, dept: null, track: null, secondDept: null, files: [], autonomous: false };
+var state = { year: null, dept: null, track: null, secondDept: null, files: [], files2: [], autonomous: false };
 
 var deptNames = {
   industrial:'공업디자인학과', visual:'시각디자인학과', metal:'금속공예학과',
@@ -62,6 +62,8 @@ document.addEventListener('click', function(e) {
     showStep('step3');
   } else if (ddId === 'dd-second') {
     state.secondDept = val;
+    var noEl = document.getElementById('upload-zone-no-2');
+    if (noEl) noEl.textContent = '2전공 이수현황' + (deptNames[val] ? ' — ' + deptNames[val] : '');
   }
   checkBtn();
 });
@@ -106,6 +108,19 @@ if (val === 'intensive') {
     } else {
       card.classList.remove('show');
       state.secondDept = null;
+    }
+    // 복수전공: 이중 업로드존 표시
+    if (val === 'double') {
+      document.getElementById('upload-zone-no-1').classList.add('visible');
+      document.getElementById('upload-zone-no-2').classList.add('visible');
+      document.getElementById('upload-col-2').style.display = 'block';
+    } else {
+      document.getElementById('upload-zone-no-1').classList.remove('visible');
+      document.getElementById('upload-zone-no-2').classList.remove('visible');
+      document.getElementById('upload-col-2').style.display = 'none';
+      state.files2 = [];
+      document.getElementById('previews-2').innerHTML = '';
+      document.getElementById('upload-zone-no-2').textContent = '2전공 이수현황';
     }
     var yr = parseInt(state.year);
     document.getElementById('autonomous-toggle').style.display = (yr >= 24) ? 'flex' : 'none';
@@ -154,6 +169,12 @@ zone.addEventListener('dragover', function(e) { e.preventDefault(); this.classLi
 zone.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
 zone.addEventListener('drop', function(e) { e.preventDefault(); this.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
 
+document.getElementById('file-input-2').addEventListener('change', function() { handleFiles2(this.files); });
+var zone2 = document.getElementById('upload-zone-2');
+zone2.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('drag-over'); });
+zone2.addEventListener('dragleave', function() { this.classList.remove('drag-over'); });
+zone2.addEventListener('drop', function(e) { e.preventDefault(); this.classList.remove('drag-over'); handleFiles2(e.dataTransfer.files); });
+
 function handleFiles(files) {
   state.files = Array.from(files);
   var preview = document.getElementById('previews');
@@ -170,10 +191,27 @@ function handleFiles(files) {
   checkBtn();
 }
 
+function handleFiles2(files) {
+  state.files2 = Array.from(files);
+  var preview = document.getElementById('previews-2');
+  preview.innerHTML = '';
+  state.files2.forEach(function(f) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = document.createElement('img');
+      img.src = e.target.result; img.className = 'preview-thumb';
+      preview.appendChild(img);
+    };
+    reader.readAsDataURL(f);
+  });
+  checkBtn();
+}
+
 function checkBtn() {
   var needSecond = (state.track === 'double' || state.track === 'minor');
   var ok = state.year && state.dept && state.track && state.files.length > 0;
   if (needSecond) ok = ok && state.secondDept;
+  if (state.track === 'double') ok = ok && state.files2.length > 0;
   document.getElementById('analyze-btn').disabled = !ok;
 }
 
@@ -186,9 +224,32 @@ function fileToBase64(file) {
   });
 }
 
-document.getElementById('analyze-btn').addEventListener('click', runAnalysis);
+document.getElementById('analyze-btn').addEventListener('click', function() {
+  var isDouble = state.track === 'double';
+  var tooFew = state.files.length <= 2 || (isDouble && state.files2.length <= 2);
+  if (tooFew) {
+    document.getElementById('few-images-popup').classList.add('open');
+    return;
+  }
+  runAnalysis();
+});
+
+/* ─── 이미지 부족 경고 팝업 ─── */
+document.getElementById('few-images-close-btn').addEventListener('click', function() {
+  document.getElementById('few-images-popup').classList.remove('open');
+});
+document.getElementById('few-images-popup').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('open');
+});
+document.getElementById('proceed-anyway-btn').addEventListener('click', function() {
+  document.getElementById('few-images-popup').classList.remove('open');
+  runAnalysis();
+});
+document.getElementById('reupload-btn').addEventListener('click', function() {
+  document.getElementById('few-images-popup').classList.remove('open');
+});
 document.getElementById('reset-btn').addEventListener('click', function() {
-  state = { year: null, dept: null, track: null, secondDept: null, files: [], autonomous: false };
+  state = { year: null, dept: null, track: null, secondDept: null, files: [], files2: [], autonomous: false };
   ['dd-year','dd-dept','dd-second'].forEach(function(id) {
     var dd = document.getElementById(id);
     dd.querySelectorAll('.dd-item').forEach(function(i) { i.classList.remove('selected','disabled'); });
@@ -200,6 +261,11 @@ document.getElementById('reset-btn').addEventListener('click', function() {
   });
   document.querySelectorAll('.option-btn').forEach(function(b) { b.classList.remove('selected'); });
   document.getElementById('previews').innerHTML = '';
+  document.getElementById('previews-2').innerHTML = '';
+  document.getElementById('upload-zone-no-1').classList.remove('visible');
+  document.getElementById('upload-zone-no-2').classList.remove('visible');
+  document.getElementById('upload-col-2').style.display = 'none';
+  document.getElementById('upload-zone-no-2').textContent = '2전공 이수현황';
   document.getElementById('result').style.display = 'none';
   document.getElementById('result').classList.remove('show');
   document.getElementById('loading').classList.remove('show');
@@ -241,7 +307,8 @@ async function runAnalysis() {
   }, 1800);
 
   try {
-    var imageContents = await Promise.all(state.files.map(async function(file) {
+    var allFiles = state.track === 'double' ? state.files.concat(state.files2) : state.files;
+    var imageContents = await Promise.all(allFiles.map(async function(file) {
       var b64 = await fileToBase64(file);
       return { type: 'image', source: { type: 'base64', media_type: file.type || 'image/jpeg', data: b64 } };
     }));
@@ -343,8 +410,9 @@ function renderResult(data, baseFromImage, finalMajorRequired) {
   var pct = Math.min(100, Math.round(totalEarned / totalRequired * 100));
 
   document.getElementById('overall-pct').innerHTML = pct + '<span>%</span>';
-  document.getElementById('overall-label').textContent =
-    pct >= 100 ? '🎓 졸업을 축하해요!' : pct >= 70 ? '거의 다 왔어요! 조금만 더' :
+  document.getElementById('overall-label').innerHTML =
+    pct >= 100 ? '<i class="ph-bold ph-graduation-cap"></i> 졸업을 축하해요!' :
+    pct >= 70 ? '거의 다 왔어요! 조금만 더' :
     pct >= 50 ? '절반 넘었어요, 잘 가고 있어요' : '잘하고 있어요, 파이팅!';
   document.getElementById('overall-detail').innerHTML =
     '총 이수학점 ' + totalEarned + ' / ' + totalRequired + '학점 &nbsp;·&nbsp; 남은 학점 ' + Math.max(0, totalRequired - totalEarned) + '학점';
@@ -409,7 +477,7 @@ function renderResult(data, baseFromImage, finalMajorRequired) {
     var intensiveRequired = Math.max(baseFromImage + 18, 66);
     var intensiveShort = Math.max(0, intensiveRequired - majorEarned);
     var intensiveCls = intensiveShort === 0 ? 'ok' : 'danger';
-    var intensiveIco = intensiveShort === 0 ? '✅' : '❌';
+    var intensiveIco = intensiveShort === 0 ? '<i class="ph-bold ph-check-circle"></i>' : '<i class="ph-bold ph-x-circle"></i>';
     var intensiveMsg = intensiveShort === 0
       ? '전공 ' + majorEarned + '학점 이수 — 심화전공 요건 충족'
       : '현재 전공 ' + majorEarned + '학점 → ' + intensiveRequired + '학점까지 ' + intensiveShort + '학점 더 필요해요';
@@ -418,36 +486,36 @@ function renderResult(data, baseFromImage, finalMajorRequired) {
 
   if (state.track === 'minor') {
     var minorDeptName = state.secondDept ? deptNames[state.secondDept] : '선택한 학과';
-    alerts.innerHTML += '<div class="alert-item warn"><span class="alert-ico">📌</span><div class="alert-txt"><strong>부전공 조건 — ' + minorDeptName + '</strong><span>일반선택 18학점을 ' + minorDeptName + ' 전공선택 과목으로 채워야 해요 — 제2전공 이수현황 캡처도 함께 올려주세요</span></div></div>';
+    alerts.innerHTML += '<div class="alert-item warn"><span class="alert-ico"><i class="ph-bold ph-push-pin"></i></span><div class="alert-txt"><strong>부전공 조건 — ' + minorDeptName + '</strong><span>일반선택 18학점을 ' + minorDeptName + ' 전공선택 과목으로 채워야 해요 — 제2전공 이수현황 캡처도 함께 올려주세요</span></div></div>';
   }
 
   if (state.track === 'double') {
     var doubleDeptName = state.secondDept ? deptNames[state.secondDept] : '선택한 학과';
-    alerts.innerHTML += '<div class="alert-item warn"><span class="alert-ico">📌</span><div class="alert-txt"><strong>복수전공 조건 — ' + doubleDeptName + '</strong><span>' + doubleDeptName + '의 졸업요건을 별도로 모두 충족해야 해요 (제1전공과 최대 15학점 중복 인정) — 제2전공 이수현황 캡처도 함께 올려주세요</span></div></div>';
+    alerts.innerHTML += '<div class="alert-item warn"><span class="alert-ico"><i class="ph-bold ph-push-pin"></i></span><div class="alert-txt"><strong>복수전공 조건 — ' + doubleDeptName + '</strong><span>' + doubleDeptName + '의 졸업요건을 별도로 모두 충족해야 해요 (제1전공과 최대 15학점 중복 인정) — 제2전공 이수현황 캡처도 함께 올려주세요</span></div></div>';
   }
 
   if (state.autonomous) {
-    alerts.innerHTML += '<div class="alert-item warn"><span class="alert-ico">ℹ️</span><div class="alert-txt"><strong>자율전공 입학자 안내</strong><span>1학년 탐색과목의 전공 인정 여부는 학과에 별도로 확인이 필요해요</span></div></div>';
+    alerts.innerHTML += '<div class="alert-item warn"><span class="alert-ico"><i class="ph-bold ph-info"></i></span><div class="alert-txt"><strong>자율전공 입학자 안내</strong><span>1학년 탐색과목의 전공 인정 여부는 학과에 별도로 확인이 필요해요</span></div></div>';
   }
 
   // 핵심교양 분야별 — 미충족만 표시
   if (coreFields.length > 0 && !coreByFieldOk) {
     coreFail.forEach(function(f) {
-      alerts.innerHTML += '<div class="alert-item danger"><span class="alert-ico">❌</span><div class="alert-txt"><strong>핵심교양 [' + f['분야'] + '] 미충족</strong><span>현재 ' + (f['이수학점'] || 0) + '학점 — 분야별 3학점 이상 필요해요</span></div></div>';
+      alerts.innerHTML += '<div class="alert-item danger"><span class="alert-ico"><i class="ph-bold ph-x-circle"></i></span><div class="alert-txt"><strong>핵심교양 [' + f['분야'] + '] 미충족</strong><span>현재 ' + (f['이수학점'] || 0) + '학점 — 분야별 3학점 이상 필요해요</span></div></div>';
     });
   }
 
   // 기초교양 필수 3과목 — 미이수만 표시
   [{name:'글쓰기',ok:b['글쓰기_이수']},{name:'College English',ok:b['CollegeEnglish_이수']},{name:'English Conversation',ok:b['EnglishConversation_이수']}].forEach(function(item) {
     if (!item.ok) {
-      alerts.innerHTML += '<div class="alert-item danger"><span class="alert-ico">❌</span><div class="alert-txt"><strong>' + item.name + '</strong><span>미이수 — 기초교양 필수과목이에요, 반드시 들어야 해요</span></div></div>';
+      alerts.innerHTML += '<div class="alert-item danger"><span class="alert-ico"><i class="ph-bold ph-x-circle"></i></span><div class="alert-txt"><strong>' + item.name + '</strong><span>미이수 — 기초교양 필수과목이에요, 반드시 들어야 해요</span></div></div>';
     }
   });
 
   // 필수과목 미이수
   m.forEach(function(item) {
     if (item['이수현황'] && item['이수현황'].includes('미이수')) {
-      alerts.innerHTML += '<div class="alert-item danger"><span class="alert-ico">⚠️</span><div class="alert-txt"><strong>필수과목 미이수: ' + item['교과목명'] + '</strong><span>졸업 전에 반드시 이수해야 해요</span></div></div>';
+      alerts.innerHTML += '<div class="alert-item danger"><span class="alert-ico"><i class="ph-bold ph-warning"></i></span><div class="alert-txt"><strong>필수과목 미이수: ' + item['교과목명'] + '</strong><span>졸업 전에 반드시 이수해야 해요</span></div></div>';
     }
   });
 
@@ -456,4 +524,73 @@ function renderResult(data, baseFromImage, finalMajorRequired) {
   result.classList.add('show');
   setTimeout(function() { result.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
 }
+
+/* ─── 과사 연락처 팝업 ─── */
+var deptPhones = {
+  industrial: { name: '공업디자인학과',      tel: '02-910-4600' },
+  visual:     { name: '시각디자인학과',      tel: '02-910-4610' },
+  metal:      { name: '금속공예학과',        tel: '02-910-4631' },
+  ceramic:    { name: '도자공예학과',        tel: '02-910-4620' },
+  fashion:    { name: '의상디자인학과',      tel: '02-910-4630' },
+  space:      { name: '공간디자인학과',      tel: '02-910-4640' },
+  media:      { name: '영상디자인학과',      tel: '02-910-5650' },
+  auto:       { name: '자동차·운송디자인학과', tel: '02-910-5791' },
+  ai:         { name: 'AI디자인학과',        tel: '02-910-4583' }
+};
+
+window.openContactPopup = function() {
+  var list = document.getElementById('contact-dept-list');
+  var keys = Object.keys(deptPhones);
+  if (state.dept && deptPhones[state.dept]) {
+    keys = [state.dept].concat(keys.filter(function(k) { return k !== state.dept; }));
+  }
+  list.innerHTML = keys.map(function(key) {
+    var d = deptPhones[key];
+    var isCurrent = key === state.dept;
+    var cls = 'contact-dept-item' + (isCurrent ? ' current' : '');
+    return '<a href="tel:' + d.tel.replace(/-/g, '') + '" class="' + cls + '">' +
+      '<span class="contact-dept-name">' + (isCurrent ? '<i class="ph-bold ph-star"></i> ' : '') + d.name + '</span>' +
+      '<span class="contact-dept-tel">' + d.tel + '</span>' +
+    '</a>';
+  }).join('');
+  document.getElementById('contact-popup-overlay').classList.add('open');
+};
+window.closeContactPopup = function() {
+  document.getElementById('contact-popup-overlay').classList.remove('open');
+};
+document.getElementById('contact-popup-overlay').addEventListener('click', function(e) {
+  if (e.target === this) window.closeContactPopup();
+});
+document.getElementById('contact-popup-close-btn').addEventListener('click', window.closeContactPopup);
+
+/* ─── 이미지로 저장 ─── */
+window.saveResultImage = function() {
+  var target = document.getElementById('result-capture');
+  if (!target || typeof html2canvas === 'undefined') return;
+  var btn = document.querySelector('.result-action-btn--save');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="ph-bold ph-spinner"></i> 저장 중...';
+  html2canvas(target, { scale: 2, useCORS: true, backgroundColor: '#f7f7f5' }).then(function(canvas) {
+    var link = document.createElement('a');
+    link.download = '졸업현황_' + new Date().toLocaleDateString('ko-KR').replace(/\. /g,'-').replace('.','') + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ph-bold ph-download-simple"></i> 이미지로 저장';
+  }).catch(function() {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ph-bold ph-download-simple"></i> 이미지로 저장';
+  });
+};
+
+/* ─── URL 공유 ─── */
+window.shareResult = function() {
+  var url = 'https://jiwooleeer.github.io/graduate/';
+  navigator.clipboard.writeText(url).then(function() {
+    var toast = document.getElementById('share-toast');
+    toast.classList.add('show');
+    setTimeout(function() { toast.classList.remove('show'); }, 2000);
+  }).catch(function() {});
+};
+
 

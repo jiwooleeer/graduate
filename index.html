@@ -15,27 +15,38 @@
   })(document);
 </script>
 <link rel="stylesheet" href="src/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 <div class="container">
+  <div class="first-screen">
   <header>
-    <div class="header-chip"><span class="header-chip-dot"></span>국민대학교 조형대학</div>
-    <h1><em>졸업</em>할 수 있을까?</h1>
+    <div class="header-chip">국민대학교 조형대학</div>
+    <h1>졸업할 수 있을까?</h1>
+    <p class="header-sub">ON국민 캡쳐 하나로<br>복잡한 졸업요건을 떠먹여드릴게요!</p>
+
+<div class="header-badges">
+  <span class="header-badge">조형대 전용</span>
+  <span class="header-badge">쉬운 설명</span>
+  <span class="header-badge">AI 자동 계산</span>
+</div>
   </header>
 
-  <div class="steps-wrap">
+  <div class="steps-wrap" id="steps-wrap-first">
 
     <!-- STEP 1: 학번 -->
     <div class="step-card visible" id="step1">
       <div class="step-card-head">
-        <div class="step-icon-wrap"><span class="step-icon-emoji">🎓</span></div>
+        <div class="step-icon-wrap"><i class="ph-bold ph-graduation-cap"></i></div>
         <div><div class="step-title">학번을 선택하세요</div></div>
       </div>
       <div class="step-body">
         <div class="custom-dd" id="dd-year">
           <div class="dd-trigger" onclick="toggleDD('dd-year')">
             <span class="dd-label">학번 선택하기</span>
-            <div class="dd-arrow">▾</div>
+            <div class="dd-arrow"><i class="ph-bold ph-caret-down"></i></div>
           </div>
           <div class="dd-list">
             <div class="dd-item" data-dd="dd-year" data-val="26">26학번</div>
@@ -53,17 +64,22 @@
       </div>
     </div>
 
+  </div><!-- /steps-wrap-first -->
+  </div><!-- /first-screen -->
+
+  <div class="steps-wrap" id="steps-wrap-rest">
+
     <!-- STEP 2: 학과 -->
     <div class="step-card" id="step2">
       <div class="step-card-head">
-        <div class="step-icon-wrap"><span class="step-icon-emoji">🎨</span></div>
+        <div class="step-icon-wrap"><i class="ph-bold ph-palette"></i></div>
         <div><div class="step-title">학과를 선택하세요</div></div>
       </div>
       <div class="step-body">
         <div class="custom-dd" id="dd-dept">
           <div class="dd-trigger" onclick="toggleDD('dd-dept')">
             <span class="dd-label">학과 선택하기</span>
-            <div class="dd-arrow">▾</div>
+            <div class="dd-arrow"><i class="ph-bold ph-caret-down"></i></div>
           </div>
           <div class="dd-list">
             <div class="dd-item" data-dd="dd-dept" data-val="industrial">공업디자인학과</div>
@@ -83,7 +99,7 @@
     <!-- STEP 3: 트랙 -->
     <div class="step-card" id="step3">
       <div class="step-card-head">
-        <div class="step-icon-wrap"><span class="step-icon-emoji">🗺️</span></div>
+        <div class="step-icon-wrap"><i class="ph-bold ph-list-checks"></i></div>
         <div><div class="step-title">이수 구분을 선택하세요</div></div>
       </div>
       <div class="step-body">
@@ -100,7 +116,7 @@
           <div class="custom-dd" id="dd-second">
             <div class="dd-trigger" onclick="toggleDD('dd-second')">
               <span class="dd-label">전공 선택하기</span>
-              <div class="dd-arrow">▾</div>
+              <div class="dd-arrow"><i class="ph-bold ph-caret-down"></i></div>
             </div>
             <div class="dd-list">
               <div class="dd-item" data-dd="dd-second" data-val="industrial">공업디자인학과</div>
@@ -133,24 +149,37 @@
     <!-- STEP 4: 업로드 -->
     <div class="step-card" id="step4">
       <div class="step-card-head">
-        <div class="step-icon-wrap"><span class="step-icon-emoji">📱</span></div>
-        <div><div class="step-title">ON국민에서 이수현황을<br>모두 캡쳐해 알려주세요</div></div>
+        <div class="step-icon-wrap"><i class="ph-bold ph-device-mobile"></i></div>
+        <div><div class="step-title">ON국민에서 이수현황을<br><span class="txt-highlight">모두</span> 캡쳐해 알려주세요</div></div>
       </div>
       <div class="step-body">
-        <div class="upload-zone" id="upload-zone">
-          <input type="file" id="file-input" accept="image/*" multiple>
-          <span class="upload-icon">☁️</span>
-          <div class="upload-text">ON국민 앱 → 우측상단 ☰ → 이수현황조회</div>
-          <div class="upload-sub">여러장도 가능해요</div>
-          <div class="upload-previews" id="previews"></div>
+        <div class="upload-dual" id="upload-dual-wrap">
+          <div class="upload-col">
+            <div class="upload-zone" id="upload-zone">
+              <input type="file" id="file-input" accept="image/*" multiple>
+              <div class="upload-zone-no" id="upload-zone-no-1">1전공 이수현황</div>
+              <div class="upload-text">ON국민 앱 → 우측상단 ☰ → 이수현황조회</div>
+              <div class="upload-sub">여러장도 가능해요</div>
+              <div class="upload-previews" id="previews"></div>
+            </div>
+          </div>
+          <div class="upload-col" id="upload-col-2" style="display:none">
+            <div class="upload-zone" id="upload-zone-2">
+              <input type="file" id="file-input-2" accept="image/*" multiple>
+              <div class="upload-zone-no" id="upload-zone-no-2">2전공 이수현황</div>
+              <div class="upload-text">ON국민 앱 → 우측상단 ☰ → 이수현황조회</div>
+              <div class="upload-sub">여러장도 가능해요</div>
+              <div class="upload-previews" id="previews-2"></div>
+            </div>
+          </div>
         </div>
         <button class="analyze-btn" id="analyze-btn" disabled>
-          AI 이미지 분석 시작하기 <span class="btn-arrow">→</span>
+          AI 이미지 분석 시작하기 <i class="ph-bold ph-arrow-right btn-arrow"></i>
         </button>
       </div>
     </div>
 
-  </div><!-- /steps-wrap -->
+  </div><!-- /steps-wrap-rest -->
 
   <div class="loading" id="loading">
     <div class="loading-dots"><span></span><span></span><span></span></div>
@@ -158,6 +187,7 @@
   </div>
 
   <div id="result">
+    <div id="result-capture">
     <div class="result-hero">
       <div class="hero-top">
         <div class="hero-tag">졸업 현황</div>
@@ -178,27 +208,42 @@
     <div class="alerts-wrap" id="alerts-section"></div>
 
    <div class="cert-wrap">
-  <div class="cert-title">🏆 전시점수</div>
+  <div class="cert-title"><i class="ph-bold ph-trophy"></i> 전시점수</div>
   <div class="cert-sub">직접 입력해 주세요</div>
   <div class="cert-grid">
     <div class="cert-item">
       <div class="cert-item-left">
         <div class="cert-item-name">공모전 수상</div>
-        <div class="cert-item-desc">국내 입상 70  입선 30<br>국외 입상 100   입선 60</div>
+        <div class="cert-item-desc">
+          <div class="cert-score-row"><span class="cert-score-label">국내 입상 / 입선</span><span class="cert-score-pts">70 / 30</span></div>
+          <div class="cert-score-row"><span class="cert-score-label">국외 입상 / 입선</span><span class="cert-score-pts">100 / 60</span></div>
+        </div>
       </div>
       <div class="cert-input-row"><input class="cert-input" type="number" id="c1" value="0" min="0"><span class="cert-unit">점</span></div>
     </div>
     <div class="cert-item">
       <div class="cert-item-left">
         <div class="cert-item-name">전시 (국내·외 공통)</div>
-        <div class="cert-item-desc">개인전 100   2~5인 70   6인이상 30<br>본교주관(교류·국제·과제전) 10<br>온라인·동아리 전시 10</div>
+        <div class="cert-item-desc">
+          <div class="cert-score-row"><span class="cert-score-label">개인전</span><span class="cert-score-pts">100</span></div>
+          <div class="cert-score-row"><span class="cert-score-label">2~5인전</span><span class="cert-score-pts">70</span></div>
+          <div class="cert-score-row"><span class="cert-score-label">6인↑</span><span class="cert-score-pts">30</span></div>
+          <div class="cert-score-row"><span class="cert-score-label">본교주관전</span><span class="cert-score-pts">10</span></div>
+          <div class="cert-score-row"><span class="cert-score-label">온라인·동아리</span><span class="cert-score-pts">10</span></div>
+        </div>
       </div>
       <div class="cert-input-row"><input class="cert-input" type="number" id="c2" value="0" min="0"><span class="cert-unit">점</span></div>
     </div>
     <div class="cert-item">
       <div class="cert-item-left">
         <div class="cert-item-name">기타</div>
-        <div class="cert-item-desc">산학협력 현장실습 30<br>교내선발(SGE·지암·교환·인턴)<br>국내 30  국외 50<br>교외 인턴십 30<br>봉사활동(8h↑) 국내 30   국외 50<br>대외활동 국내 30   국외 50</div>
+        <div class="cert-item-desc">
+          <div class="cert-score-row"><span class="cert-score-label">산학협력 현장실습</span><span class="cert-score-pts">30</span></div>
+          <div class="cert-score-row"><span class="cert-score-label">교내선발 (국내/국외)</span><span class="cert-score-pts">30/50</span></div>
+          <div class="cert-score-row"><span class="cert-score-label">교외 인턴십</span><span class="cert-score-pts">30</span></div>
+          <div class="cert-score-row"><span class="cert-score-label">봉사활동 8h↑ (국내/국외)</span><span class="cert-score-pts">30/50</span></div>
+          <div class="cert-score-row"><span class="cert-score-label">대외활동 (국내/국외)</span><span class="cert-score-pts">30/50</span></div>
+        </div>
       </div>
       <div class="cert-input-row"><input class="cert-input" type="number" id="c3" value="0" min="0"><span class="cert-unit">점</span></div>
     </div>
@@ -222,7 +267,26 @@
   </div>
 </div>
 
-    <button class="reset-btn" id="reset-btn">← 처음부터 다시</button>
+    </div><!-- /#result-capture -->
+
+    <div class="result-actions">
+      <button class="result-action-btn result-action-btn--save" onclick="saveResultImage()">
+        <i class="ph-bold ph-download-simple"></i> 이미지로 저장
+      </button>
+      <button class="result-action-btn result-action-btn--share" onclick="shareResult()">
+        <i class="ph-bold ph-share-network"></i> 공유하기
+      </button>
+    </div>
+
+    <button class="reset-btn" id="reset-btn"><i class="ph-bold ph-arrow-left"></i> 처음부터 다시</button>
+  </div>
+
+  <div class="bottom-spacer"></div>
+
+  <div class="contact-wrap">
+    <button class="contact-btn" onclick="openContactPopup()">
+      <i class="ph-bold ph-phone"></i> 조형대 과사 연락하기
+    </button>
   </div>
 
   <footer>
@@ -232,11 +296,12 @@
 </div>
 
 <script type="module" src="src/main.js"></script>
+<div class="share-toast" id="share-toast"><i class="ph-bold ph-check"></i> 링크가 복사됐어요!</div>
 
 <!-- 심화전공 안내 팝업 -->
 <div class="popup-overlay" id="intensive-popup-overlay">
   <div class="popup-modal">
-    <button class="popup-close" id="popup-close-btn">✕</button>
+    <button class="popup-close" id="popup-close-btn"><i class="ph-bold ph-x"></i></button>
     <div class="popup-total">
       <div class="popup-total-label">조형대 졸업이수학점</div>
       <div class="popup-total-pts">130점</div>
@@ -277,7 +342,7 @@
 <!-- 부전공 안내 팝업 -->
 <div class="popup-overlay" id="minor-popup-overlay">
   <div class="popup-modal">
-    <button class="popup-close" id="minor-popup-close-btn">✕</button>
+    <button class="popup-close" id="minor-popup-close-btn"><i class="ph-bold ph-x"></i></button>
     <div class="popup-total">
       <div class="popup-total-label">조형대 졸업이수학점</div>
       <div class="popup-total-pts">130점</div>
@@ -312,6 +377,29 @@
     <div class="popup-footer-note">
       부전공은 <strong>일반선택 학점 중</strong> 18점 이상을<br>전공으로 수강해야해요
     </div>
+  </div>
+</div>
+<!-- 과사 연락처 팝업 -->
+<div class="popup-overlay" id="contact-popup-overlay">
+  <div class="popup-modal">
+    <button class="popup-close" id="contact-popup-close-btn"><i class="ph-bold ph-x"></i></button>
+    <div style="font-size:18px;font-weight:700;letter-spacing:-0.5px;margin-bottom:4px;">과사 연락처</div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">학과를 누르면 바로 전화 연결돼요</div>
+    <div class="contact-dept-list" id="contact-dept-list"></div>
+  </div>
+</div>
+<!-- 이미지 부족 경고 팝업 -->
+<div class="popup-overlay" id="few-images-popup">
+  <div class="popup-modal">
+    <button class="popup-close" id="few-images-close-btn"><i class="ph-bold ph-x"></i></button>
+    <div style="font-size:20px;font-weight:700;letter-spacing:-0.5px;line-height:1.3;margin-bottom:10px;">잠깐, 이수현황을 모두 캡쳐하셨나요?</div>
+    <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:16px;">ON국민 이수현황의 맨 아래까지 캡쳐하지 않으면,<br>아래 항목들이 누락될 수 있어요.</div>
+    <ul class="popup-warn-missing">
+      <li>핵심교양 분야별 현황</li>
+      <li>전공 필수과목 이수 여부</li>
+    </ul>
+    <button class="popup-btn-primary" id="reupload-btn">이미지 재업로드</button>
+    <button class="popup-btn-secondary" id="proceed-anyway-btn">이대로 진행하기</button>
   </div>
 </div>
 </body>
